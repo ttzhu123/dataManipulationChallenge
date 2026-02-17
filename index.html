@@ -473,7 +473,7 @@ First few rows of product line data:
 <li>Dtype of actualShipDate: datetime64[us]</li>
 </ul>
 <p>Use the .dtype attribute on the series, shipments_df[‘actualShipDate’].dtype.</p>
-<div id="f3cb93b8" class="cell" data-execution_count="3">
+<div id="9c7cb250" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Dtype of actualShipDate:"</span>, shipments_df[<span class="st">'actualShipDate'</span>].dtype)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"All column dtypes:</span><span class="ch">\n</span><span class="st">"</span>, shipments_df.dtypes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -517,7 +517,7 @@ dtype: object</code></pre>
 <ul>
 <li></li>
 </ul>
-<div id="a52c11e9" class="cell" data-execution_count="4">
+<div id="5574bd9c" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>shipments_with_lateness <span class="op">=</span> (</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    shipments_df</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
@@ -647,7 +647,7 @@ Late shipments sample:
 <ul>
 <li></li>
 </ul>
-<div id="a83f1c96" class="cell" data-execution_count="6">
+<div id="634c4d68" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>late_threshold <span class="op">=</span> <span class="dv">5</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>shipments_df <span class="op">=</span> shipments_df.assign(</span>
@@ -793,7 +793,7 @@ Remaining columns: ['shipID', 'plannedShipDate', 'actualShipDate', 'partID', 'is
 </div>
 <div class="callout-body-container callout-body">
 <p>*The difference is the sort order, ascending=True (default) sorts values from smallest to largest, ascending=False sorts values from largest to smallest.</p>
-<div id="12380dd3" class="cell" data-execution_count="9">
+<div id="4264e7a3" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>shipments_df <span class="op">=</span> shipments_df.assign(</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    is_late<span class="op">=</span>shipments_df[<span class="st">'actualShipDate'</span>] <span class="op">&gt;</span> shipments_df[<span class="st">'plannedShipDate'</span>],</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    days_late<span class="op">=</span>(shipments_df[<span class="st">'actualShipDate'</span>] <span class="op">-</span> shipments_df[<span class="st">'plannedShipDate'</span>]).dt.days</span>
@@ -1149,7 +1149,7 @@ Percentage with multiple categories: 23.3%</code></pre>
 <h3 class="anchored" data-anchor-id="professional-visualizations-for-100-grade">Professional Visualizations (For 100% Grade)</h3>
 <p><strong>Your Task:</strong> Create a professional visualization that supports your analysis and demonstrates your understanding of the data.</p>
 <p><strong>Create visualizations showing:</strong> - Service level (on-time percentage) by product category</p>
-<div id="fc0f6645" class="cell" data-execution_count="14">
+<div id="611f2f51" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1219,7 +1219,7 @@ Percentage with multiple categories: 23.3%</code></pre>
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Liquids and Marketables have the highest on-time delivery rates, while SpareParts and Machines show lower service levels. This suggests that heavier or more complex products may face greater logistical challenges, highlighting areas where operational improvements could improve reliability.*</li>
+<li>Liquids and Marketables have the highest on-time delivery rates, while SpareParts and Machines show lower service levels. This suggests that heavier or more complex products may face greater logistical challenges, highlighting areas where operational improvements could improve reliability. *</li>
 </ul>
 </div>
 </div>
