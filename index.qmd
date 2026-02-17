@@ -159,13 +159,13 @@ from datetime import datetime, timedelta
 
 # Load the shipment data
 shipments_df = pd.read_csv(
-    "https://raw.githubusercontent.com/flyaflya/persuasive/main/shipments.csv", 
+    "/Users/zhutiti/Downloads/UD/UD course/26Spring/BUAD621/BUAD621/dataManipulationChallenge/shipments.csv", 
     parse_dates=['plannedShipDate', 'actualShipDate']
 )
 
 # Load product line data
 product_line_df = pd.read_csv(
-    "https://raw.githubusercontent.com/flyaflya/persuasive/main/productLine.csv"
+    "/Users/zhutiti/Downloads/UD/UD course/26Spring/BUAD621/BUAD621/dataManipulationChallenge/productLine.csv"
 )
 
 # Reduce dataset size for faster processing (4,000 rows instead of 96,805 rows)
@@ -175,6 +175,10 @@ print("Shipments data shape:", shipments_df.shape)
 print("\nShipments data columns:", shipments_df.columns.tolist())
 print("\nFirst few rows of shipments data:")
 print(shipments_df.head(10))
+
+# Check dtype of actualShipDate (and other columns)
+print("\nDtype of actualShipDate:", shipments_df['actualShipDate'].dtype)
+print("All column dtypes:\n", shipments_df.dtypes)
 
 print("\n" + "="*50)
 print("Product line data shape:", product_line_df.shape)
@@ -250,7 +254,8 @@ print(shipments_with_lateness[['shipID', 'plannedShipDate', 'actualShipDate', 'i
 ## 🤔 Discussion Questions: Assign Mental Model
 
 **Question 1: Data Types and Date Handling**
-- What is the `dtype` of the `actualShipDate` series? How can you find out using code?
+- What is the `dtype` of the `actualShipDate` series? How can you find out using code? 
+
 - Why is it important that both `actualShipDate` and `plannedShipDate` have the same data type for comparison?
 
 **Question 2: String vs Date Comparison**
@@ -264,28 +269,56 @@ shipments_with_lateness = (
     .assign(
         is_late=lambda df: df['actualShipDate'] > df['plannedShipDate'],
         days_late=lambda df: (df['actualShipDate'] - df['plannedShipDate']).dt.days,
-        lateStatement="Darn Shipment is Late" if shipments_df['is_late'] else "Shipment is on Time"
+        lateStatement=lambda df: np.where(df['is_late'], "Darn Shipment is Late", "Shipment is on Time")
     )
 )
 ```
 What's wrong with the `lateStatement` assignment and how would you fix it?
 :::
 
+
 ::: {.callout-tip}
 ## Your Answer: Data Types and Date Handling
 *Replace this with your answer to Question 1.*
-:::
+::: Dtype of actualShipDate: datetime64[us]
+
+Use the .dtype attribute on the series, shipments_df['actualShipDate'].dtype
+
+```{python}
+print("\nDtype of actualShipDate:", shipments_df['actualShipDate'].dtype)
+print("All column dtypes:\n", shipments_df.dtypes)
+```
+If both columns are datetimes, pandas knows they’re dates and can correctly compare and compute them.
 
 ::: {.callout-tip}
 ## Your Answer: String vs Date Comparison
 *Replace this with your answer to Question 2.*
-:::
+:::Comparing dates as strings can give misleading results because string comparison is character-by-character.
+
+For example, as strings:
+"04-11-2025" < "05-20-2024" (because "04" comes before "05").
+
+But as actual dates:
+April 11, 2025 is later than May 20, 2024.
+
+This happens because the "MM-DD-YYYY" format is not chronologically sortable as strings; the year comes last.
 
 ::: {.callout-tip}
 ## Your Answer: Debug This Code
 *Replace this with your answer to Question 3.*
-:::
+::: 
 
+```{python}
+shipments_with_lateness = (
+    shipments_df
+    .assign(
+        is_late=lambda df: df['actualShipDate'] > df['plannedShipDate'],
+        days_late=lambda df: (df['actualShipDate'] - df['plannedShipDate']).dt.days,
+        lateStatement=lambda df: np.where(df['is_late'], "Darn Shipment is Late", "Shipment is on Time")
+    )
+)
+print(shipments_with_lateness)
+```
 ### 2. Subset: Querying Rows and Filtering Columns
 
 **Mental Model:** Query rows based on conditions and filter to keep specific columns.
