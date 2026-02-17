@@ -279,30 +279,27 @@ What's wrong with the `lateStatement` assignment and how would you fix it?
 
 ::: {.callout-tip}
 ## Your Answer: Data Types and Date Handling
-*Replace this with your answer to Question 1.*
-::: Dtype of actualShipDate: datetime64[us]
+* Dtype of actualShipDate: datetime64[us]
 
-Use the .dtype attribute on the series, shipments_df['actualShipDate'].dtype
+Use the .dtype attribute on the series, shipments_df['actualShipDate'].dtype.
 
 ```{python}
 print("\nDtype of actualShipDate:", shipments_df['actualShipDate'].dtype)
 print("All column dtypes:\n", shipments_df.dtypes)
 ```
 If both columns are datetimes, pandas knows they’re dates and can correctly compare and compute them.
-
+*
+::: 
 ::: {.callout-tip}
 ## Your Answer: String vs Date Comparison
-*Replace this with your answer to Question 2.*
-:::
-Comparing dates as strings can give misleading results because string comparison is character-by-character. For example, as strings:
+*Comparing dates as strings can give misleading results because string comparison is character-by-character. For example, as strings:
 "04-11-2025" < "05-20-2024" (because "04" comes before "05"). But as actual dates:
-April 11, 2025 is later than May 20, 2024. This happens because the "MM-DD-YYYY" format is not chronologically sortable as strings; the year comes last.
+April 11, 2025 is later than May 20, 2024. This happens because the "MM-DD-YYYY" format is not chronologically sortable as strings; the year comes last.*
+:::
 
 ::: {.callout-tip}
 ## Your Answer: Debug This Code
-*Replace this with your answer to Question 3.*
-::: 
-
+*
 ```{python}
 shipments_with_lateness = (
     shipments_df
@@ -314,7 +311,8 @@ shipments_with_lateness = (
 )
 print(shipments_with_lateness)
 ```
-
+*
+::: 
 ### 2. Subset: Querying Rows and Filtering Columns
 
 **Mental Model:** Query rows based on conditions and filter to keep specific columns.
@@ -365,9 +363,7 @@ Use .query() for simple, human-readable filters more readable; use boolean index
 
 ::: {.callout-tip}
 ## Your Answer: Additional Row Querying
-*Replace this with your answer to Question 2.*
-:::
-
+*
 ```{python}
 late_threshold = 5
 
@@ -378,6 +374,8 @@ shipments_df = shipments_df.assign(
 late_shipments = shipments_df.query('days_late >= @late_threshold')
 print(late_shipments)
 ```
+*
+:::
 
 ### 3. Drop: Removing Unwanted Data
 
@@ -463,7 +461,7 @@ print(sorted_by_lateness[['shipID', 'partID', 'days_late', 'is_late']].head(10))
 ::: {.callout-tip}
 ## Your Answer: Sorting Strategies
 *The difference is the sort order, ascending=True (default) sorts values from smallest to largest, ascending=False sorts values from largest to smallest.
-*
+
 ```{python}
 shipments_df = shipments_df.assign(
     is_late=shipments_df['actualShipDate'] > shipments_df['plannedShipDate'],
@@ -479,6 +477,9 @@ df_sorted = (
 print(df_sorted)
 
 ```
+*
+:::
+
 ::: {.callout-tip}
 ## Your Answer: Index Management
 *We use .reset_index(drop=True) after sorting to clean up the index.It makes the DataFrame easier to read and safer to work with after sorting.
@@ -524,7 +525,7 @@ print(f"\nOn-time delivery rate: {on_time_rate:.1f}%")
 ::: {.callout-tip}
 ## Your Answer: Boolean Aggregation
 *sum() works on boolean values because booleans are treated as numbers in Python (and pandas)
-It adds up the True values, effectively counting how many rows are True..*
+It adds up the True values, effectively counting how many rows are True.*
 :::
 
 ### 6. Merge: Combining Information
@@ -568,12 +569,12 @@ print(shipments_with_category['prodCategory'].value_counts())
 
 ::: {.callout-tip}
 ## Your Answer: Join Types and Data Loss
-*because it is the safest and most predictable join for analysis. we can check for lost shipments by comparing row counts before and after the merge, or by explicitly checking which rows didn’t match.*
+* Because it is the safest and most predictable join for analysis. We can check for lost shipments by comparing row counts before and after the merge, or by explicitly checking which rows didn’t match.*
 :::
 
 ::: {.callout-tip}
 ## Your Answer: Key Column Matching
-*If product_line_df has duplicate partID values, the merge can duplicate shipment rows (one-to-many), so the row count increases unexpectedly. This can inflate totals/averages/counts and make it unclear which product line record is the correct match.*
+* If product_line_df has duplicate partID values, the merge can duplicate shipment rows (one-to-many), so the row count increases unexpectedly. This can inflate totals/averages/counts and make it unclear which product line record is the correct match.*
 :::
 
 ### 7. Split-Apply-Combine: Group Analysis
@@ -614,7 +615,7 @@ print(service_by_category)
 
 ::: {.callout-tip}
 ## Your Answer: GroupBy Mechanics
-*.groupby('prodCategory') does not change the data by itself — it organizes it into groups so you can run calculations on each group. we need .agg(), because groupby() alone only defines the groups, it doesn’t compute anything. agg() tells pandas what calculation to perform on each group.*
+* .groupby('prodCategory') does not change the data by itself — it organizes it into groups so you can run calculations on each group. we need .agg(), because groupby() alone only defines the groups, it doesn’t compute anything. agg() tells pandas what calculation to perform on each group.*
 :::
 
 ::: {.callout-tip}
@@ -704,6 +705,64 @@ Knowing the percentage of multi-category shipments helps ZappTech’s management
 
 **Create visualizations showing:**
 - Service level (on-time percentage) by product category
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+shipments_with_category['plannedShipDate'] = pd.to_datetime(shipments_with_category['plannedShipDate'])
+shipments_with_category['actualShipDate']  = pd.to_datetime(shipments_with_category['actualShipDate'])
+
+shipments_with_category = shipments_with_category.assign(
+    is_late=lambda df: df['actualShipDate'] > df['plannedShipDate'],
+    days_late=lambda df: (df['actualShipDate'] - df['plannedShipDate']).dt.days
+)
+
+shipments_with_category = shipments_with_category.rename(columns={'prodCategory_y': 'prodCategory'})
+
+service_level_by_category = (
+    shipments_with_category
+    .groupby('prodCategory')
+    .agg(service_level=('is_late', lambda x: (~x).mean()))
+    .reset_index()
+    .sort_values('service_level', ascending=False)
+    .reset_index(drop=True)
+)
+
+
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8, 5))
+bars = plt.bar(
+    service_level_by_category['prodCategory'],
+    service_level_by_category['service_level'],
+    color='#4C72B0'
+)
+
+for bar in bars:
+    height = bar.get_height()
+    plt.text(
+        bar.get_x() + bar.get_width() / 2,
+        height,
+        f"{height:.1%}",
+        ha='center',
+        va='bottom'
+    )
+
+plt.ylabel('On-Time Percentage')
+plt.xlabel('Product Category')
+plt.title('Service Level by Product Category')
+plt.ylim(0, 1)
+plt.grid(axis='y', linestyle='--', alpha=0.4)
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+```
+::: {.callout-tip}
+## Interpretation:
+* Liquids and Marketables have the highest on-time delivery rates, while SpareParts and Machines show lower service levels. This suggests that heavier or more complex products may face greater logistical challenges, highlighting areas where operational improvements could improve reliability. *
+:::
 
 **Your visualizations should:**
 - Use clear labels and professional formatting
